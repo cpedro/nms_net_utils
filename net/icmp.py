@@ -3,16 +3,15 @@
 File: net/icmp.py
 Description: Performs various ICMP related tasks.
 
+Author: Chris Pedro
+Copyright: (c) Chris Pedro 2022'
+Licence: MIT
+Version: 0.2.0
+
 Combines code from the below places:
     https://gist.github.com/pklaus/856268 - Only works with Python2
     https://github.com/l4m3rx/python-ping - Has a bit more than needed
 """
-
-
-__author__ = 'Chris Pedro'
-__copyright__ = '(c) Chris Pedro 2022'
-__licence__ = 'MIT'
-__version__ = '0.1.0'
 
 
 import os
@@ -48,12 +47,11 @@ ICMP_ECHO_IPV6_REPLY = 129  # Echo request (per RFC4443)
 ICMP_MAX_RECV = 2048  # Max size of incoming buffer
 
 
-def _send(my_socket, dest_ip, my_id, seq, payload_size, ipv6=False):
-    """
-    Send one ping to the given >dest_ip<.
+def _send(my_socket, dest_ip, my_id, seq, packet_size, ipv6=False):
+    """Send one ping to the given >dest_ip<.
     """
     # Header is type (8), code (8), checksum (16), id (16), sequence (16)
-    # (payload_size - 8) - Remove header size from packet size
+    # (packet_size - 8) - Remove header size from packet size
     my_checksum = 0
 
     # Make a dummy heder with a 0 checksum.
@@ -71,10 +69,10 @@ def _send(my_socket, dest_ip, my_id, seq, payload_size, ipv6=False):
     # or it will make packets with unexpected size.
     if sys.version[:1] == '2':
         _bytes = struct.calcsize('d')
-        data = ((payload_size - 8) - _bytes) * 'Q'
+        data = ((packet_size - 8) - _bytes) * 'Q'
         data = struct.pack('d', default_timer()) + data
     else:
-        for i in range(start_val, start_val + (payload_size - 8)):
+        for i in range(start_val, start_val + (packet_size - 8)):
             pad_bytes += [(i & 0xff)]  # Keep chars in the 0-255 range
         # data = bytes(pad_bytes)
         data = bytearray(pad_bytes)
@@ -93,7 +91,7 @@ def _send(my_socket, dest_ip, my_id, seq, payload_size, ipv6=False):
 
     packet = header + data
 
-    sendTime = default_timer()
+    send_time = default_timer()
 
     try:
         my_socket.sendto(packet, (dest_ip, 1))  # Port number is irrelevant
@@ -102,12 +100,11 @@ def _send(my_socket, dest_ip, my_id, seq, payload_size, ipv6=False):
     except socket.error:
         return
 
-    return sendTime
+    return send_time
 
 
 def _receive(my_socket, my_id, timeout, ipv6=False):
-    """
-    Receive the ping from the socket. Timeout = in ms
+    """Receive the ping from the socket. Timeout = in ms
     """
     time_left = timeout / 1000
 
@@ -120,25 +117,25 @@ def _receive(my_socket, my_id, timeout, ipv6=False):
 
         time_received = default_timer()
 
-        rec_packet, addr = my_socket.recvfrom(ICMP_MAX_RECV)
+        data, addr = my_socket.recvfrom(ICMP_MAX_RECV)
 
-        ip_header = rec_packet[:20]
+        ip_header = data[:20]
 
         (head_version, head_tos, head_len, head_id, head_flags, head_ttl,
             head_protocol, head_checksum, head_src, head_dest) = (
                 struct.unpack('!BBHHHBBHII', ip_header))
 
         if ipv6:
-            icmp_header = rec_packet[0:8]
+            icmp_header = data[0:8]
         else:
-            icmp_header = rec_packet[20:28]
+            icmp_header = data[20:28]
 
         icmp_type, icmp_code, icmp_checksum, icmp_packet_id, icmp_seq = (
             struct.unpack('!BBHHH', icmp_header))
 
         # Match only the packets we care about
-        if (icmp_type != 8) and (icmp_packet_id == my_id):
-            data_size = len(rec_packet) - 28
+        if (icmp_type != ICMP_ECHO) and (icmp_packet_id == my_id):
+            data_size = len(data) - 28
             return (time_received, (data_size + 8), head_src, icmp_seq,
                     head_ttl)
 
@@ -147,10 +144,9 @@ def _receive(my_socket, my_id, timeout, ipv6=False):
             return None, 0, 0, 0, 0
 
 
-def single_ping(dest_ip, timeout, seq, payload_size, ipv6=False,
+def single_ping(dest_ip, timeout, seq, packet_size, ipv6=False,
                 src_ip=None, verbose=False):
-    """
-    Returns either the delay (in ms) or None on timeout.
+    """Returns either the delay (in ms) or None on timeout.
     """
     delay = None
 
@@ -179,7 +175,7 @@ def single_ping(dest_ip, timeout, seq, payload_size, ipv6=False,
 
     my_ID = (os.getpid() ^ get_ident()) & 0xFFFF
 
-    sent_time = _send(my_socket, dest_ip, my_ID, seq, payload_size, ipv6)
+    sent_time = _send(my_socket, dest_ip, my_ID, seq, packet_size, ipv6)
     if sent_time is None:
         my_socket.close()
         return delay
