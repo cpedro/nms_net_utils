@@ -6,7 +6,6 @@ Description: Performs various ICMP related tasks.
 Author: Chris Pedro
 Copyright: (c) Chris Pedro 2022'
 Licence: MIT
-Version: 0.2.0
 
 Combines code from the below places:
     https://gist.github.com/pklaus/856268 - Only works with Python2
