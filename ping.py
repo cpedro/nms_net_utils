@@ -93,7 +93,7 @@ def main(args):
             if args.udp and args.udp_port:
                 delay = udp.single_ping(
                     args.destination, args.udp_port, args.timeout, i,
-                    args.length, verbose=args.verbose)
+                    args.length, src_ip=args.source, verbose=args.verbose)
             else:
                 delay = icmp.single_ping(
                     args.destination, args.timeout, i, args.length,
