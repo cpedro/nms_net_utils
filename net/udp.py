@@ -26,7 +26,7 @@ else:
 
 
 # UDP parameters
-UDP_SRC_PORT = 1024  # Default UDP source port
+UDP_SRC_PORT = 0  # Default UDP source port
 UDP_MAX_RECV = 2048  # Max size of incoming buffer
 UDP_IPV6_HEADER_SIZE = 44  # UDP + IP header size for IPv4
 UDP_IPV4_HEADER_SIZE = 16  # UDP + IP header size for IPv6
