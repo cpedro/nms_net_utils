@@ -48,7 +48,7 @@ ICMP_ECHO_IPV6_REPLY = 129  # Echo request (per RFC4443)
 ICMP_MAX_RECV = 2048  # Max size of incoming buffer
 
 
-def send(my_socket, dest_ip, my_id, seq, payload_size, ipv6=False):
+def _send(my_socket, dest_ip, my_id, seq, payload_size, ipv6=False):
     """
     Send one ping to the given >dest_ip<.
     """
@@ -105,7 +105,7 @@ def send(my_socket, dest_ip, my_id, seq, payload_size, ipv6=False):
     return sendTime
 
 
-def receive(my_socket, my_id, timeout, ipv6=False):
+def _receive(my_socket, my_id, timeout, ipv6=False):
     """
     Receive the ping from the socket. Timeout = in ms
     """
@@ -179,12 +179,12 @@ def single_ping(dest_ip, timeout, seq, payload_size, ipv6=False,
 
     my_ID = (os.getpid() ^ get_ident()) & 0xFFFF
 
-    sent_time = send(my_socket, dest_ip, my_ID, seq, payload_size, ipv6)
+    sent_time = _send(my_socket, dest_ip, my_ID, seq, payload_size, ipv6)
     if sent_time is None:
         my_socket.close()
         return delay
 
-    recv_time, data_size, src, seq, ttl = receive(
+    recv_time, data_size, src, seq, ttl = _receive(
         my_socket, my_ID, timeout, ipv6)
 
     my_socket.close()
