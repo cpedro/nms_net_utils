@@ -1,7 +1,12 @@
 # -*- encoding: utf-8; py-indent-offset: 4 -*-
 """
 File: net/utils.py
-Description: Performs various ICMP related tasks.
+Description: Performs various utility tasks.
+
+Author: Chris Pedro
+Copyright: (c) Chris Pedro 2022'
+Licence: MIT
+Version: 0.2.0
 
 Combines code from the below places:
     https://gist.github.com/pklaus/856268 - Only works with Python2
@@ -9,15 +14,40 @@ Combines code from the below places:
 """
 
 
-__author__ = 'Chris Pedro'
-__copyright__ = '(c) Chris Pedro 2022'
-__licence__ = 'MIT'
-__version__ = '0.1.0'
-
-
+import argparse
 import array
+import struct
 import sys
 import socket
+import time
+
+
+if sys.platform == 'win32':
+    # On Windows, the best timer is time.clock()
+    default_timer = time.clock
+else:
+    # On most other platforms the best timer is time.time()
+    default_timer = time.time
+
+
+def check_positive_int(value):
+    """Check if the given value is an int and positive.
+    """
+    ivalue = int(value)
+    if ivalue <= 0:
+        raise argparse.ArgumentTypeError(
+            '{} must be a positive int value'.format(value))
+    return ivalue
+
+
+def check_positive_float(value):
+    """Check if the given value is a float and positive.
+    """
+    fvalue = float(value)
+    if fvalue <= 0:
+        raise argparse.ArgumentTypeError(
+            '{} must be a positive float value'.format(value))
+    return fvalue
 
 
 def checksum(source_string):
@@ -42,6 +72,22 @@ def checksum(source_string):
     answer = socket.htons(answer)
 
     return answer
+
+
+def generate_packet_data(payload_size):
+    pad_bytes = []
+    start_val = 0x42
+
+    # TODO: Refractor
+    if sys.version[:1] == '2':
+        _bytes = struct.calcsize('d')
+        data = (payload_size - _bytes) * 'Q'
+        data = struct.pack('d', default_timer()) + data
+    else:
+        for i in range(start_val, start_val + payload_size):
+            pad_bytes += [(i & 0xff)]
+        data = bytearray(pad_bytes)
+    return data
 
 
 def mos_score(latency, jitter, loss):

@@ -4,8 +4,11 @@
 File: ping.py
 Description: Pure python implementation of ping with some added output
     functionality, mainly for ingestion into Nagios / Check_MK.
+
 Author: Chris Pedro
-Date: 2022-06-23
+Copyright: (c) Chris Pedro 2022'
+Licence: MIT
+Version: 0.2.0
 
 Combines code from the below places:
     https://gist.github.com/pklaus/856268 - Only works with Python2
@@ -13,37 +16,11 @@ Combines code from the below places:
 """
 
 
-__author__ = 'Chris Pedro'
-__copyright__ = '(c) Chris Pedro 2022'
-__licence__ = 'MIT'
-__version__ = '0.1.0'
-
-
 import argparse
 import sys
 
 from signal import signal, SIGABRT, SIGINT, SIGTERM
-from net import icmp, utils
-
-
-def check_positive_int(value):
-    """Check if the given value is an int and positive.
-    """
-    ivalue = int(value)
-    if ivalue <= 0:
-        raise argparse.ArgumentTypeError(
-            '{} must be a positive int value'.format(value))
-    return ivalue
-
-
-def check_positive_float(value):
-    """Check if the given value is a float and positive.
-    """
-    ivalue = float(value)
-    if ivalue <= 0:
-        raise argparse.ArgumentTypeError(
-            '{} must be a positive float value'.format(value))
-    return ivalue
+from net import icmp, udp, utils
 
 
 def parse_args(args):
@@ -51,45 +28,50 @@ def parse_args(args):
     """
     parser = argparse.ArgumentParser(description='Python Ping Implementation')
     parser.add_argument(
-        '-c', '--count', default=4, type=check_positive_int,
+        '-c', '--count', default=4, type=utils.check_positive_int,
         help='number of packets to send')
     parser.add_argument(
-        '-t', '--timeout', default=3000, type=check_positive_int,
+        '-t', '--timeout', default=3000, type=utils.check_positive_int,
         help='timeout in ms')
     parser.add_argument(
-        '-l', '--length', default=192, type=check_positive_int,
-        help='ICMP payload length')
+        '-l', '--length', default=192, type=utils.check_positive_int,
+        help='Total packet length')
     parser.add_argument('-a', default='A', help='A side name')
     parser.add_argument('-z', default='Z', help='Z side name')
     parser.add_argument('-s', '--source', help='source IP')
     parser.add_argument(
         '-d', '--destination', default='8.8.8.8', help='destination host')
     parser.add_argument(
+        '-u', '--udp', action='store_true', help='use UDP instead of ICMP')
+    parser.add_argument(
+        '-U', '--udp-port', default=5001, type=utils.check_positive_int,
+        help='use UDP port, required if UDP is being used (-u)')
+    parser.add_argument(
         '-o', '--output', choices=['normal', 'nagios'], default='normal',
         help='output type')
     parser.add_argument(
-        '-p', '--loss-warn', default=10, type=check_positive_float,
+        '-p', '--loss-warn', default=10, type=utils.check_positive_float,
         help='packet loss warning threshold')
     parser.add_argument(
-        '-P', '--loss-crit', default=20, type=check_positive_float,
+        '-P', '--loss-crit', default=20, type=utils.check_positive_float,
         help='packet loss critical threshold')
     parser.add_argument(
-        '-r', '--rtt-warn', default=75, type=check_positive_int,
+        '-r', '--rtt-warn', default=75, type=utils.check_positive_int,
         help='latency RTT warning threshold')
     parser.add_argument(
-        '-R', '--rtt-crit', default=100, type=check_positive_int,
+        '-R', '--rtt-crit', default=100, type=utils.check_positive_int,
         help='latency RTT critical threshold')
     parser.add_argument(
-        '-j', '--jitter-warn', default=20, type=check_positive_int,
+        '-j', '--jitter-warn', default=20, type=utils.check_positive_int,
         help='latency RTT warning threshold')
     parser.add_argument(
-        '-J', '--jitter-crit', default=30, type=check_positive_int,
+        '-J', '--jitter-crit', default=30, type=utils.check_positive_int,
         help='latency RTT critical threshold')
     parser.add_argument(
-        '-m', '--mos-warn', default=4, type=check_positive_float,
+        '-m', '--mos-warn', default=4, type=utils.check_positive_float,
         help='MOS score warning threshold')
     parser.add_argument(
-        '-M', '--mos-crit', default=3, type=check_positive_float,
+        '-M', '--mos-crit', default=3, type=utils.check_positive_float,
         help='MOS score critical threshold')
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='verbose output')
@@ -108,9 +90,14 @@ def main(args):
     # Do pings, and collect latencies all other stats will be derived.
     for i in range(0, args.count):
         try:
-            delay = icmp.single_ping(
-                args.destination, args.timeout, i, args.length,
-                src_ip=args.source, verbose=args.verbose)
+            if args.udp and args.udp_port:
+                delay = udp.single_ping(
+                    args.destination, args.udp_port, args.timeout, i,
+                    args.length, verbose=args.verbose)
+            else:
+                delay = icmp.single_ping(
+                    args.destination, args.timeout, i, args.length,
+                    src_ip=args.source, verbose=args.verbose)
         except OSError:
             sys.exit(2)
 

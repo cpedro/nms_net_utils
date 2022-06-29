@@ -45,6 +45,8 @@ ICMP_ECHO = 8  # Echo request (per RFC792)
 ICMP_ECHO_IPV6 = 128  # Echo request (per RFC4443)
 ICMP_ECHO_IPV6_REPLY = 129  # Echo request (per RFC4443)
 ICMP_MAX_RECV = 2048  # Max size of incoming buffer
+ICMP_ECHO_IPV4_HEADER_SIZE = 8  # ICMP + IP header size for IPv4
+ICMP_ECHO_IPV6_HEADER_SIZE = 32  # ICMP + IP header size for IPv6
 
 
 def _send(my_socket, dest_ip, my_id, seq, packet_size, ipv6=False):
@@ -58,24 +60,13 @@ def _send(my_socket, dest_ip, my_id, seq, packet_size, ipv6=False):
     if ipv6:
         header = struct.pack(
             '!BbHHh', ICMP_ECHO_IPV6, 0, my_checksum, my_id, seq)
+        header_len = ICMP_ECHO_IPV6_HEADER_SIZE
     else:
         header = struct.pack(
             '!BBHHH', ICMP_ECHO, 0, my_checksum, my_id, seq)
+        header_len = ICMP_ECHO_IPV4_HEADER_SIZE
 
-    pad_bytes = []
-    start_val = 0x42
-    # 'cose of the string/byte changes in python 2/3 we have
-    # to build the data differnely for different version
-    # or it will make packets with unexpected size.
-    if sys.version[:1] == '2':
-        _bytes = struct.calcsize('d')
-        data = ((packet_size - 8) - _bytes) * 'Q'
-        data = struct.pack('d', default_timer()) + data
-    else:
-        for i in range(start_val, start_val + (packet_size - 8)):
-            pad_bytes += [(i & 0xff)]  # Keep chars in the 0-255 range
-        # data = bytes(pad_bytes)
-        data = bytearray(pad_bytes)
+    data = utils.generate_packet_data((packet_size - header_len))
 
     # Calculate the checksum on the data and the dummy header.
     my_checksum = utils.checksum(header + data)  # Checksum is in network order
@@ -127,8 +118,10 @@ def _receive(my_socket, my_id, timeout, ipv6=False):
 
         if ipv6:
             icmp_header = data[0:8]
+            header_len = ICMP_ECHO_IPV6_HEADER_SIZE
         else:
             icmp_header = data[20:28]
+            header_len = ICMP_ECHO_IPV4_HEADER_SIZE
 
         icmp_type, icmp_code, icmp_checksum, icmp_packet_id, icmp_seq = (
             struct.unpack('!BBHHH', icmp_header))
@@ -136,8 +129,8 @@ def _receive(my_socket, my_id, timeout, ipv6=False):
         # Match only the packets we care about
         if (icmp_type != ICMP_ECHO) and (icmp_packet_id == my_id):
             data_size = len(data) - 28
-            return (time_received, (data_size + 8), head_src, icmp_seq,
-                    head_ttl)
+            return (time_received, (data_size + header_len), head_src,
+                    icmp_seq, head_ttl)
 
         time_left = time_left - how_long_in_select
         if time_left <= 0:
