@@ -147,7 +147,7 @@ def receive(my_socket, my_id, timeout, ipv6=False):
             return None, 0, 0, 0, 0
 
 
-def single_ping(dest_ip, timeout, seq, payload_size, ipv6=False, 
+def single_ping(dest_ip, timeout, seq, payload_size, ipv6=False,
                 src_ip=None, verbose=False):
     """
     Returns either the delay (in ms) or None on timeout.

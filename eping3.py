@@ -62,7 +62,7 @@ def parse_args(args):
     parser.add_argument('-a', default='A', help='A side name')
     parser.add_argument('-z', default='Z', help='Z side name')
     parser.add_argument('-s', '--source', help='source IP')
-    parser.add_argument( 
+    parser.add_argument(
         '-d', '--destination', default='8.8.8.8', help='destination host')
     parser.add_argument(
         '-o', '--output', choices=['normal', 'nagios'], default='normal',
@@ -102,7 +102,7 @@ def main(args):
     lost = 0
     latency = []
     jitter = []
-    
+
     args = parse_args(args)
 
     # Do pings, and collect latencies all other stats will be derived.
