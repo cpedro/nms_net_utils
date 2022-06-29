@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8; py-indent-offset: 4 -*-
 """
-File: eping3.py
+File: ping.py
 Description: Pure python implementation of ping with some added output
     functionality, mainly for ingestion into Nagios / Check_MK.
 Author: Chris Pedro
