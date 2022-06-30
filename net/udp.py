@@ -10,19 +10,9 @@ Licence: MIT
 
 
 import random
-import sys
 import socket
-import time
 
 from . import utils
-
-
-if sys.platform == 'win32':
-    # On Windows, the best timer is time.clock()
-    default_timer = time.clock
-else:
-    # On most other platforms the best timer is time.time()
-    default_timer = time.time
 
 
 # UDP parameters
@@ -87,7 +77,7 @@ def _send(my_socket, dest_ip, port, seq, packet_length, ipv6=False):
     data = utils.generate_packet_data((packet_length - header_len))
     address = (dest_ip, port)
 
-    send_time = default_timer()
+    send_time = utils.default_timer()
 
     try:
         my_socket.sendto(data, address)
@@ -109,7 +99,7 @@ def _receive(my_socket, ipv6=False):
 
     try:
         data, address = my_socket.recvfrom(UDP_MAX_RECV)
-        recv_time = default_timer()
+        recv_time = utils.default_timer()
         return recv_time, (len(data) + header_len)
     except socket.timeout:
         return None, 0

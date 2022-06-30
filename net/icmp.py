@@ -17,25 +17,14 @@ import os
 import select
 import socket
 import struct
-import sys
-import time
 
 from . import utils
-
 
 try:
     from _thread import get_ident
 except ImportError:
     def get_ident():
         return 0
-
-
-if sys.platform == 'win32':
-    # On Windows, the best timer is time.clock()
-    default_timer = time.clock
-else:
-    # On most other platforms the best timer is time.time()
-    default_timer = time.time
 
 
 # ICMP parameters
@@ -81,7 +70,7 @@ def _send(my_socket, dest_ip, my_id, seq, packet_size, ipv6=False):
 
     packet = header + data
 
-    send_time = default_timer()
+    send_time = utils.default_timer()
 
     try:
         my_socket.sendto(packet, (dest_ip, 1))  # Port number is irrelevant
@@ -99,13 +88,13 @@ def _receive(my_socket, my_id, timeout, ipv6=False):
     time_left = timeout / 1000
 
     while True:  # Loop while waiting for packet or timeout
-        started_select = default_timer()
+        started_select = utils.default_timer()
         what_ready = select.select([my_socket], [], [], time_left)
-        how_long_in_select = (default_timer() - started_select)
+        how_long_in_select = (utils.default_timer() - started_select)
         if what_ready[0] == []:  # Timeout
             return None, 0, 0, 0, 0
 
-        time_received = default_timer()
+        time_received = utils.default_timer()
 
         data, addr = my_socket.recvfrom(ICMP_MAX_RECV)
 

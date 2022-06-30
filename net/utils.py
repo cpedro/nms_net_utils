@@ -21,14 +21,6 @@ import socket
 import time
 
 
-if sys.platform == 'win32':
-    # On Windows, the best timer is time.clock()
-    default_timer = time.clock
-else:
-    # On most other platforms the best timer is time.time()
-    default_timer = time.time
-
-
 def check_positive_int(value):
     """Check if the given value is an int and positive.
     """
@@ -73,7 +65,20 @@ def checksum(source_string):
     return answer
 
 
+def default_timer():
+    """Returns best timer to use, based on the system running the script.
+    """
+    if sys.platform == 'win32':
+        # On Windows, the best timer is time.clock()
+        return time.clock()
+    else:
+        # On most other platforms the best timer is time.time()
+        return time.time()
+
+
 def generate_packet_data(payload_size):
+    """Generates random data to be used in a packet payload.
+    """
     pad_bytes = []
     start_val = 0x42
 
