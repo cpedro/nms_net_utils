@@ -133,7 +133,7 @@ def main(args):
         avg_jitter = 'NaN'
 
     if len(latency) > 0:
-        mos = utils.mos_score(avg_latency, max_jitter, lost_perc)
+        mos = utils.mos_score(avg_latency, avg_jitter, lost_perc)
     else:
         mos = 0
 
