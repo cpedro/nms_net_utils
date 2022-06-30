@@ -82,6 +82,9 @@ def generate_packet_data(payload_size):
     pad_bytes = []
     start_val = 0x42
 
+    # Because of the string/byte changes in Python 3 we have to build the
+    # data differnely for different version or it will make packets with
+    # unexpected size.
     if sys.version[:1] == '2':
         _bytes = struct.calcsize('d')
         data = (payload_size - _bytes) * 'Q'
