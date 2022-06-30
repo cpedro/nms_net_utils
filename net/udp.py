@@ -68,7 +68,6 @@ def listen_and_reply(address, port, ipv6=False, loss=0, verbose=False):
 def _send(my_socket, dest_ip, port, seq, packet_length, ipv6=False):
     """Sends data over the UDP socket.
     """
-    # TODO: set to variables
     if ipv6:
         header_len = UDP_IPV6_HEADER_SIZE
     else:

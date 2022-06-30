@@ -82,7 +82,6 @@ def generate_packet_data(payload_size):
     pad_bytes = []
     start_val = 0x42
 
-    # TODO: Refractor
     if sys.version[:1] == '2':
         _bytes = struct.calcsize('d')
         data = (payload_size - _bytes) * 'Q'
