@@ -146,7 +146,7 @@ def main(args):
                 min_latency, max_latency, avg_latency))
             print(' - jitter (MIN/MAX/AVG): {:.2f}/{:.2f}/{:.2f} ms'.format(
                 min_jitter, max_jitter, avg_jitter))
-            print(' - MOS: {:.1f}'.format(mos))
+            print(' - MOS: {:.2f}'.format(mos))
     elif args.output == 'nagios':
         # If all packets were lost, just return critical.
         if lost_perc == 1:
@@ -203,8 +203,8 @@ def main(args):
                                              (float(args.jitter_crit) / 1000),
                                              (float(args.timeout) / 1000),
                                              args.destination, avg_jitter)))
-            print(('{} {}_to_{}_mos mos={:.1f};{:.1f};{:.1f};0.0;5.0 {} - '
-                   '{:.1f} mos score'.format(mos_status, args.a, args.z, mos,
+            print(('{} {}_to_{}_mos mos={:.2f};{:.2f};{:.2f};0.0;5.0 {} - '
+                   '{:.2f} mos score'.format(mos_status, args.a, args.z, mos,
                                              args.mos_warn, args.mos_crit,
                                              args.destination, mos)))
             sys.exit(loss_status)
