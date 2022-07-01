@@ -6,6 +6,12 @@ have their output ingested into Check_MK / Nagios.
 
 # Ping Script
 
+The ping script can be used to ping a destination on the internet and report
+back latency, packet loss, jitter and MOS score.  There is also an option to
+output text in Nagios / Check_MK readable format.  Along with this, there's
+options to set warning and critical threshold for each metric that will cause
+these states in Nagios / Check_MK.
+
 ## Usage
 
 ```
