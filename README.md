@@ -139,7 +139,7 @@ Below is a table showing the MOS Score vs the preceived quality.
 | 4.3 - 5.0 | Best | Very satisfied |
 | 4.0 - 4.3 | Good | Satisfied |
 | 3.6 - 4.0 | Just OK | Some users satisfied |
-| 3.1 - 3.6 | Bad | Man users dissatisfied |
+| 3.1 - 3.6 | Bad | Many users dissatisfied |
 | 2.6 - 3.1 | Very Bad | Nearly all users dissatisfied |
 | 1.0 - 2.6 | Not Recommended | All users dissatisfied |
 
