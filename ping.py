@@ -33,7 +33,7 @@ def parse_args(args):
         '-t', '--timeout', default=3000, type=utils.check_positive_int,
         help='timeout in ms')
     parser.add_argument(
-        '-l', '--length', default=192, type=utils.check_positive_int,
+        '-l', '--length', default=64, type=utils.check_positive_int,
         help='Total packet length')
     parser.add_argument('-a', default='A', help='A side name')
     parser.add_argument('-z', default='Z', help='Z side name')
@@ -138,15 +138,15 @@ def main(args):
         mos = float('nan')
 
     if args.output == 'normal':
-        print('Statistics for {} to {}:'.format(args.a, args.z))
-        print(' - packet loss: {}/{} ({:.2%})'.format(
-            lost, args.count, lost_perc))
+        print(('{} ping statistics ({} bytes):\n'
+               ' - packet loss: {:.2%} ({}/{})').format(
+            args.destination, args.length, lost_perc, lost, args.count))
         if len(latency) > 0:
             print(' - latency (MIN/MAX/AVG): {:.2f}/{:.2f}/{:.2f} ms'.format(
                 min_latency, max_latency, avg_latency))
             print(' - jitter (MIN/MAX/AVG): {:.2f}/{:.2f}/{:.2f} ms'.format(
                 min_jitter, max_jitter, avg_jitter))
-            print(' - MOS: {:.2f}'.format(mos))
+            print(' - MOS score: {:.2f}'.format(mos))
     elif args.output == 'nagios':
         # If all packets were lost, just return critical.
         if lost_perc == 1:
