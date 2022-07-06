@@ -118,9 +118,9 @@ def main(args):
         max_latency = max(latency)
         avg_latency = sum(latency) / len(latency)
     else:
-        min_latency = 'NaN'
-        max_latency = 'NaN'
-        avg_latency = 'NaN'
+        min_latency = float('nan')
+        max_latency = float('nan')
+        avg_latency = float('nan')
 
     # Calculate min, max and average jitter
     if len(jitter) > 0:
@@ -128,14 +128,14 @@ def main(args):
         max_jitter = max(jitter)
         avg_jitter = sum(jitter) / len(jitter)
     else:
-        min_jitter = 'NaN'
-        max_jitter = 'NaN'
-        avg_jitter = 'NaN'
+        min_jitter = float('nan')
+        max_jitter = float('nan')
+        avg_jitter = float('nan')
 
     if len(latency) > 0:
         mos = utils.mos_score(avg_latency, avg_jitter, (lost_perc * 100))
     else:
-        mos = 0
+        mos = float('nan')
 
     if args.output == 'normal':
         print('Statistics for {} to {}:'.format(args.a, args.z))
@@ -187,26 +187,23 @@ def main(args):
                 mos_status = 0
 
             print(('{} {}_to_{}_loss loss={:.2f};{:.2f};{:.2f};0;100 {} - '
-                   '{:.2%} packets lost'.format(loss_status, args.a, args.z,
-                                                lost_perc * 100,
-                                                args.loss_warn, args.loss_crit,
-                                                args.destination, lost_perc)))
+                   '{:.2%} packets lost').format(
+                loss_status, args.a, args.z, lost_perc * 100, args.loss_warn,
+                args.loss_crit, args.destination, lost_perc))
             print(('{} {}_to_{}_delay delay={:2f};{};{};0;{} {} - {:.2f} ms '
-                   'delay'.format(latency_status, args.a, args.z,
-                                  avg_latency, args.rtt_warn, args.rtt_crit,
-                                  args.timeout, args.destination,
-                                  avg_latency)))
-            print(('{} {}_to_{}_jitter jitter={:.6f};{:.6f};{:.6f};0;{} {} - '
-                   '{:.2f} ms jitter'.format(jitter_status, args.a, args.z,
-                                             (float(avg_jitter) / 1000),
-                                             (float(args.jitter_warn) / 1000),
-                                             (float(args.jitter_crit) / 1000),
-                                             (float(args.timeout) / 1000),
-                                             args.destination, avg_jitter)))
+                   'delay').format(
+                latency_status, args.a, args.z, avg_latency, args.rtt_warn,
+                args.rtt_crit, args.timeout, args.destination, avg_latency))
+            print(('{} {}_to_{}_jitter jitter={:.5f};{:.5f};{:.5f};0;{} {} - '
+                   '{:.2f} ms jitter').format(
+                jitter_status, args.a, args.z, (avg_jitter / 1000),
+                (args.jitter_warn / 1000), (args.jitter_crit / 1000),
+                (args.timeout / 1000), args.destination, avg_jitter))
             print(('{} {}_to_{}_mos mos={:.2f};{:.2f};{:.2f};0.0;5.0 {} - '
-                   '{:.2f} mos score'.format(mos_status, args.a, args.z, mos,
-                                             args.mos_warn, args.mos_crit,
-                                             args.destination, mos)))
+                   '{:.2f} mos score').format(
+                mos_status, args.a, args.z, mos, args.mos_warn, args.mos_crit,
+                args.destination, mos))
+
             sys.exit(loss_status)
 
 
