@@ -15,8 +15,10 @@ these states in Nagios / Check_MK.
 ## Usage
 
 ```
-usage: ping.py [-h] [-c COUNT] [-t TIMEOUT] [-l LENGTH] [-a A] [-z Z] [-s SOURCE] [-d DESTINATION] [-u] [-U UDP_PORT]
-               [-o {normal,nagios}] [-p LOSS_WARN] [-P LOSS_CRIT] [-r RTT_WARN] [-R RTT_CRIT] [-j JITTER_WARN] [-J JITTER_CRIT]
+usage: ping.py [-h] [-c COUNT] [-t TIMEOUT] [-l LENGTH] [-a A] [-z Z]
+               [-s SOURCE] [-d DESTINATION] [-u] [-U UDP_PORT]
+               [-o {normal,nagios}] [-p LOSS_WARN] [-P LOSS_CRIT]
+               [-r RTT_WARN] [-R RTT_CRIT] [-j JITTER_WARN] [-J JITTER_CRIT]
                [-m MOS_WARN] [-M MOS_CRIT] [-v]
 
 Python Ping Implementation
