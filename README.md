@@ -134,14 +134,14 @@ though, for VoIP calls using g.711 codec, the highest score possible is 4.4.
 
 Below is a table showing the MOS Score vs the preceived quality.
 
-| MOS Score | Call Quality | User Satisfaction |
-| --- | --- | --- |
-| 4.3 - 5.0 | Best | Very satisfied |
-| 4.0 - 4.3 | Good | Satisfied |
-| 3.6 - 4.0 | Just OK | Some users dissatisfied |
-| 3.1 - 3.6 | Bad | Many users dissatisfied |
-| 2.6 - 3.1 | Very Bad | Nearly all users dissatisfied |
-| 1.0 - 2.6 | Not Recommended | All users dissatisfied |
+| MOS Score | Call Quality    | User Satisfaction             |
+| --------- | --------------- | ----------------------------- |
+| 4.3 - 5.0 | Best            | Very satisfied                |
+| 4.0 - 4.3 | Good            | Satisfied                     |
+| 3.6 - 4.0 | Just OK         | Some users dissatisfied       |
+| 3.1 - 3.6 | Bad             | Many users dissatisfied       |
+| 2.6 - 3.1 | Very Bad        | Nearly all users dissatisfied |
+| 1.0 - 2.6 | Not Recommended | All users dissatisfied        |
 
 The algorithm used for MOS score calculation was found online on
 [PingPlotter's KB](https://www.pingman.com/kb/article/how-is-mos-calculated-in-pingplotter-pro-50.html).
