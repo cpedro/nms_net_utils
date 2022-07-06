@@ -35,29 +35,31 @@ def listen_and_reply(address, port, ipv6=False, loss=0, verbose=False):
             my_socket = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
             my_socket.bind((address, port))
         except OSError as e:
-            print(format(str(e)))
-            print('NOTE: Using port < 1024 requires root permissions to run.')
+            utils.eprint(format(str(e)))
+            utils.eprint(
+                'NOTE: Using port < 1024 requires root permissions to run.')
             raise
     else:
         try:
             my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             my_socket.bind((address, port))
         except OSError as e:
-            print(format(str(e)))
-            print('NOTE: Using port < 1024 requires root permissions to run.')
+            utils.eprint(format(str(e)))
+            utils.eprint(
+                'NOTE: Using port < 1024 requires root permissions to run.')
             raise
 
     try:
         while True:
             data, address = my_socket.recvfrom(UDP_MAX_RECV)
             if verbose:
-                print('Received from {}: {}'.format(address, data))
+                utils.eprint('Received from {}: {}'.format(address, data))
 
             if loss > 0:
                 rand = random.uniform(0, 99)
                 if rand < loss:
                     if verbose:
-                        print('Packet being ignored.')
+                        utils.eprint('Packet being ignored.')
                     continue
 
             my_socket.sendto(data, address)
@@ -118,8 +120,9 @@ def single_ping(dest_ip, port, timeout, seq, packet_length, ipv6=False,
                 my_socket.bind((src_ip, UDP_SRC_PORT))
             my_socket.settimeout(float(timeout) / 1000)
         except OSError as e:
-            print(format(str(e)))
-            print('NOTE: Using port < 1024 requires root permissions to run.')
+            utils.eprint(format(str(e)))
+            utils.eprint(
+                'NOTE: Using port < 1024 requires root permissions to run.')
             raise
     else:
         try:
@@ -128,8 +131,9 @@ def single_ping(dest_ip, port, timeout, seq, packet_length, ipv6=False,
                 my_socket.bind((src_ip, UDP_SRC_PORT))
             my_socket.settimeout(float(timeout) / 1000)
         except OSError as e:
-            print(format(str(e)))
-            print('NOTE: Using port < 1024 requires root permissions to run.')
+            utils.eprint(format(str(e)))
+            utils.eprint(
+                'NOTE: Using port < 1024 requires root permissions to run.')
             raise
 
     sent_time = _send(my_socket, dest_ip, port, seq, packet_length, ipv6)
@@ -141,7 +145,7 @@ def single_ping(dest_ip, port, timeout, seq, packet_length, ipv6=False,
     if recv_time:
         delay = (recv_time - sent_time) * 1000
         if verbose:
-            print("{} bytes from {}: seq={} time={:.2f} ms".format(
+            utils.eprint("{} bytes from {}: seq={} time={:.2f} ms".format(
                 data_size, dest_ip, seq, delay))
     else:
         delay = None

@@ -139,8 +139,8 @@ def single_ping(dest_ip, timeout, seq, packet_size, ipv6=False,
                 my_socket.bind((src_ip, 0))
             my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         except OSError as e:
-            print(format(str(e)))
-            print('NOTE: This script requires root permissions to run.')
+            utils.eprint(format(str(e)))
+            utils.eprint('NOTE: This script requires root permissions to run.')
             raise
     else:
         try:
@@ -150,8 +150,8 @@ def single_ping(dest_ip, timeout, seq, packet_size, ipv6=False,
                 my_socket.bind((src_ip, 0))
             my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         except OSError as e:
-            print(format(str(e)))
-            print('NOTE: This script requires root permissions to run.')
+            utils.eprint(format(str(e)))
+            utils.eprint('NOTE: This script requires root permissions to run.')
             raise
 
     my_ID = (os.getpid() ^ get_ident()) & 0xFFFF
@@ -169,8 +169,9 @@ def single_ping(dest_ip, timeout, seq, packet_size, ipv6=False,
     if recv_time:
         delay = (recv_time - sent_time) * 1000
         if verbose:
-            print("{} bytes from {}: icmp_seq={} ttl={} time={:.2f} ms".format(
-                  data_size, dest_ip, seq, ttl, delay))
+            utils.eprint(
+                '{} bytes from {}: icmp_seq={} ttl={} time={:.2f} ms'.format(
+                    data_size, dest_ip, seq, ttl, delay))
     else:
         delay = None
 

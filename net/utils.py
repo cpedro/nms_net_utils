@@ -1,3 +1,4 @@
+from __future__ import print_function
 # -*- encoding: utf-8; py-indent-offset: 4 -*-
 """
 File: net/utils.py
@@ -74,6 +75,12 @@ def default_timer():
     else:
         # On most other platforms the best timer is time.time()
         return time.time()
+
+
+def eprint(*args, **kwargs):
+    """Print error message to stderr.
+    """
+    print(*args, file=sys.stderr, **kwargs)
 
 
 def generate_packet_data(payload_size):
