@@ -145,10 +145,12 @@ def single_ping(dest_ip, port, timeout, seq, packet_length, ipv6=False,
     if recv_time:
         delay = (recv_time - sent_time) * 1000
         if verbose:
-            utils.eprint("{} bytes from {}: seq={} time={:.2f} ms".format(
+            utils.eprint('{} bytes from {}: seq={} time={:.2f} ms'.format(
                 data_size, dest_ip, seq, delay))
     else:
         delay = None
+        if verbose:
+            utils.eprint('Request timeout for seq {}'.format(seq))
 
     return delay
 

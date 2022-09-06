@@ -174,6 +174,8 @@ def single_ping(dest_ip, timeout, seq, packet_size, ipv6=False,
                     data_size, dest_ip, seq, ttl, delay))
     else:
         delay = None
+        if verbose:
+            utils.eprint('Request timeout for icmp_seq {}'.format(seq))
 
     return delay
 
