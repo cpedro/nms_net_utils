@@ -17,13 +17,13 @@ these states in Nagios / Check_MK.
 ```
 usage: ping.py [-h] [-c COUNT] [-t TIMEOUT] [-l LENGTH] [-a A] [-z Z]
                [-s SOURCE] [-d DESTINATION] [-u] [-U UDP_PORT]
-               [-o {normal,nagios}] [-p LOSS_WARN] [-P LOSS_CRIT]
+               [-o {normal,nagios,check_mk}] [-p LOSS_WARN] [-P LOSS_CRIT]
                [-r RTT_WARN] [-R RTT_CRIT] [-j JITTER_WARN] [-J JITTER_CRIT]
                [-m MOS_WARN] [-M MOS_CRIT] [-v]
 
 Python Ping Implementation
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -c COUNT, --count COUNT
                         number of packets to send
@@ -40,7 +40,7 @@ optional arguments:
   -u, --udp             use UDP instead of ICMP
   -U UDP_PORT, --udp-port UDP_PORT
                         use UDP port, required if UDP is being used (-u)
-  -o {normal,nagios}, --output {normal,nagios}
+  -o {normal,nagios,check_mk}, --output {normal,nagios,check_mk}
                         output type
   -p LOSS_WARN, --loss-warn LOSS_WARN
                         packet loss warning threshold
