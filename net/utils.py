@@ -28,7 +28,7 @@ def check_positive_int(value):
     ivalue = int(value)
     if ivalue <= 0:
         raise argparse.ArgumentTypeError(
-            '{} must be a positive int value'.format(value))
+            f'{value} must be a positive int value')
     return ivalue
 
 
@@ -38,7 +38,7 @@ def check_positive_float(value):
     fvalue = float(value)
     if fvalue <= 0:
         raise argparse.ArgumentTypeError(
-            '{} must be a positive float value'.format(value))
+            f'{value} must be a positive float value')
     return fvalue
 
 
