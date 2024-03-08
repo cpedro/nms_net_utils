@@ -135,18 +135,18 @@ def ping(source, destination, length, count, timeout,
         mos = float('nan')
 
     return (
-        lost, lost_perc, latency, min_latency, max_latency, avg_latency,
+        lost, lost_perc, min_latency, max_latency, avg_latency,
         min_jitter, max_jitter, avg_jitter, mos)
 
 
-def print_output(args, lost, lost_perc, latency, min_latency, max_latency,
+def print_output(args, lost, lost_perc, min_latency, max_latency,
                  avg_latency, min_jitter, max_jitter, avg_jitter, mos):
     """Print output.
     """
     if args.output == 'normal':
         print(f'{args.destination} ping statistics ({args.length} bytes):\n'
               f' - packet loss: {lost_perc:.2%} ({lost}/{args.count})')
-        if len(latency) > 0:
+        if len(lost_perc) < 1:
             print(f' - latency (MIN/MAX/AVG): {min_latency:.2f}/'
                   f'{max_latency:.2f}/{avg_latency:.2f}')
             print(f' - jitter (MIN/MAX/AVG): {min_jitter:.2f}/{max_jitter:.2f}'
@@ -157,11 +157,12 @@ def print_output(args, lost, lost_perc, latency, min_latency, max_latency,
         ping_type = 'udp' if args.udp else 'icmp'
         if lost_perc == 1:
             print(f'{args.a}_to_{args.z} {args.destination} {ping_type} '
-                  f'{lost_perc:.2f} 0 0 0')
+                  f'{lost_perc:.4f} NaN NaN NaN NaN NaN NaN NaN')
         else:
             print(f'{args.a}_to_{args.z} {args.destination} {ping_type} '
-                  f'{lost_perc:.2f} {avg_latency:.2f} {avg_jitter:.2f} '
-                  f'{mos:.2f}')
+                  f'{lost_perc:.4f} {min_latency:.2f} {max_latency:.2f} '
+                  f'{avg_latency:.2f} {min_jitter:.2f} {max_jitter:.2f} '
+                  f'{avg_jitter:.2f} {mos:.2f}')
     elif args.output == 'nagios':
         # If all packets were lost, just return critical.
         if lost_perc == 1:
@@ -228,7 +229,7 @@ def main(args):
 
     # Run a single ping.
     (
-        lost, lost_perc, latency, min_latency, max_latency, avg_latency,
+        lost, lost_perc, min_latency, max_latency, avg_latency,
         min_jitter, max_jitter, avg_jitter, mos
     ) = ping(
         args.source, args.destination, args.length, args.count, args.timeout,
@@ -236,7 +237,7 @@ def main(args):
 
     # Print output.
     print_output(
-        args, lost, lost_perc, latency, min_latency, max_latency, avg_latency,
+        args, lost, lost_perc, min_latency, max_latency, avg_latency,
         min_jitter, max_jitter, avg_jitter, mos)
 
 
