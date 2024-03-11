@@ -169,13 +169,13 @@ def single_ping(dest_ip, timeout, seq, packet_size, ipv6=False,
     if recv_time:
         delay = (recv_time - sent_time) * 1000
         if verbose:
-            utils.eprint(
-                f'{data_size} bytes from {dest_ip}: icmp_seq={seq} ttl={ttl} '
-                f'time={delay:.2f} ms')
+            utils.eprint((
+                '{} bytes from {}: icmp_seq={} ttl={} time={:.2f} ms').format(
+                    data_size, dest_ip, seq, ttl, delay))
     else:
         delay = None
         if verbose:
-            utils.eprint(f'Request timeout for icmp_seq {seq}')
+            utils.eprint('Request timeout for icmp_seq {}'.format(seq))
 
     return delay
 

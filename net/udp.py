@@ -53,7 +53,7 @@ def listen_and_reply(address, port, ipv6=False, loss=0, verbose=False):
         while True:
             data, address = my_socket.recvfrom(UDP_MAX_RECV)
             if verbose:
-                utils.eprint(f'Received from {address}: {data}')
+                utils.eprint('Received from {}: {}'.format(address, data))
 
             if loss > 0:
                 rand = random.uniform(0, 99)
@@ -145,12 +145,12 @@ def single_ping(dest_ip, port, timeout, seq, packet_length, ipv6=False,
     if recv_time:
         delay = (recv_time - sent_time) * 1000
         if verbose:
-            utils.eprint(f'{data_size} bytes from {dest_ip}: seq={seq} '
-                         f'time={delay:.2f} ms')
+            utils.eprint('{} bytes from {}: seq={} time={:.2f} ms'.format(
+                data_size, dest_ip, seq, delay))
     else:
         delay = None
         if verbose:
-            utils.eprint(f'Request timeout for seq {seq}')
+            utils.eprint('Request timeout for seq {}'.format(seq))
 
     return delay
 

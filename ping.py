@@ -144,33 +144,36 @@ def print_output(args, lost, lost_perc, min_latency, max_latency,
     """Print output.
     """
     if args.output == 'normal':
-        print(f'{args.destination} ping statistics ({args.length} bytes):\n'
-              f' - packet loss: {lost_perc:.2%} ({lost}/{args.count})')
-        if len(lost_perc) < 1:
-            print(f' - latency (MIN/MAX/AVG): {min_latency:.2f}/'
-                  f'{max_latency:.2f}/{avg_latency:.2f}')
-            print(f' - jitter (MIN/MAX/AVG): {min_jitter:.2f}/{max_jitter:.2f}'
-                  f'/{avg_jitter:.2f} ms')
-            print(f' - MOS score: {mos:.2f}')
+        print('{} ping statistics ({} bytes):'.format(
+            args.destination, args.length))
+        print(' - packet loss: {:.2%} ({}/{})'.format(
+            lost_perc, lost, args.count))
+        if lost_perc != 1:
+            print(' - latency (MIN/MAX/AVG): {:.2f}/{:.2f}/{:.2f}'.format(
+                min_latency, max_latency, avg_latency))
+            print(' - jitter (MIN/MAX/AVG): {:.2f}/{:.2f}/{:.2f} ms'.format(
+                min_jitter, max_jitter, avg_jitter))
+            print(' - MOS score: {:.2f}'.format(mos))
     elif args.output == 'check_mk':
         print('<<<nms_net_utils_ping>>>>')
         ping_type = 'udp' if args.udp else 'icmp'
         if lost_perc == 1:
-            print(f'{args.a}_to_{args.z} {args.destination} {ping_type} '
-                  f'{lost_perc:.4f} NaN NaN NaN NaN NaN NaN NaN')
+            print('{}_to_{} {} {} {:.4f} NaN NaN NaN NaN NaN NaN NaN'.format(
+                args.a, args.z, args.destination, ping_type, lost_perc))
         else:
-            print(f'{args.a}_to_{args.z} {args.destination} {ping_type} '
-                  f'{lost_perc:.4f} {min_latency:.2f} {max_latency:.2f} '
-                  f'{avg_latency:.2f} {min_jitter:.2f} {max_jitter:.2f} '
-                  f'{avg_jitter:.2f} {mos:.2f}')
+            print(('{}_to_{} {} {} {:.4f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} '
+                  '{:.2f} {:.2f}').format(
+                args.a, args.z, args.destination, ping_type, lost_perc,
+                min_latency, max_latency, avg_latency, min_latency, max_jitter,
+                avg_jitter, mos))
     elif args.output == 'nagios':
         # If all packets were lost, just return critical.
         if lost_perc == 1:
-            print(f'2 {args.a}_to_{args.z}_loss lost={lost_perc:.2f} '
-                  f'{args.destination} - no reply')
-            print(f'2 {args.a}_to_{args.z}_delay - no reply')
-            print(f'2 {args.a}_to_{args.z}_jitter - no reply')
-            print(f'2 {args.a}_to_{args.z}_mos - no reply')
+            print('2 {}_to_{}_loss lost={:.2f} {} - no reply'.format(
+                args.a, args.z, lost_perc, args.destination))
+            print('2 {}_to_{}_delay - no reply'.format(args.a, args.z))
+            print('2 {}_to_{}_jitter - no reply'.format(args.a, args.z))
+            print('2 {}_to_{}_mos - no reply'.format(args.a, args.z))
             sys.exit(2)
         else:
             # Generate status responses.
@@ -202,22 +205,23 @@ def print_output(args, lost, lost_perc, min_latency, max_latency,
             else:
                 mos_status = 0
 
-            print(f'{loss_status} {args.a}_to_{args.z}_loss '
-                  f'loss={(lost_perc * 100):.2f};{args.loss_warn:.2f};'
-                  f'{args.loss_crit:.2f};0;100 {args.destination} - '
-                  f'{lost_perc:.2%} packets lost')
-            print(f'{latency_status} {args.a}_to_{args.z}_delay '
-                  f'delay={avg_latency:.2f};{args.rtt_warn};{args.rtt_crit};0;'
-                  f'{args.timeout} {args.destination} - {avg_latency:.2f} ms '
-                  f'delay')
-            print(f'{jitter_status} {args.a}_to_{args.z}_jitter '
-                  f'jitter={(avg_jitter / 1000):.5f};'
-                  f'{(args.jitter_warn / 1000):.5f};'
-                  f'{(args.jitter_crit / 1000):.5f};0;{(args.timeout / 1000)} '
-                  f'{args.destination} - {avg_jitter:.2f} ms jitter')
-            print(f'{mos_status} {args.a}_to_{args.z}_mos mos={mos:.2f};'
-                  f'{args.mos_warn:.2f};{args.mos_crit:.2f};0.0;5.0 '
-                  f'{args.destination} - {mos:.2f} mos score')
+            print(('{} {}_to_{}_loss loss={:.2f};{:.2f};{:.2f};0;100 {} - '
+                   '{:.2%} packets lost').format(
+                loss_status, args.a, args.z, (lost_perc * 100),
+                args.loss_warn, args.loss_crit, args.destination, lost_perc))
+            print(('{} {}_to_{}_delay delay={:.2f};{};{};0;{} {} - {:.2f} ms '
+                   'delay').format(
+                latency_status, args.a, args.z, avg_latency, args.rtt_warn,
+                args.rtt_crit, args.timeout, args.destination, avg_latency))
+            print(('{} {}_to_{}_jitter jitter={:.5f};{:.5f};{:.5f};0;{} {} - '
+                   '{:.2f} ms jitter').format(
+                jitter_status, args.a, args.z, (avg_jitter / 1000),
+                (args.jitter_warn / 1000), (args.jitter_crit / 1000),
+                (args.timeout / 1000), args.destination, avg_jitter))
+            print(('{} {}_to_{}_mos mos={:.2f};{:.2f};{:.2f};0.0;5.0 {} - '
+                   '{:.2f} mos score').format(
+                mos_status, args.a, args.z, mos, args.mos_warn,
+                args.mos_crit, args.destination, mos))
 
             sys.exit(loss_status)
 
