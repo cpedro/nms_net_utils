@@ -18,8 +18,8 @@ Combines code from the below places:
 import argparse
 import sys
 
+from net import ping, utils
 from signal import signal, SIGABRT, SIGINT, SIGTERM
-from net import icmp, udp, utils
 
 
 def parse_args(args):
@@ -75,68 +75,6 @@ def parse_args(args):
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='verbose output')
     return parser.parse_args(args)
-
-
-def ping(source, destination, length, count, timeout,
-         udp_ping=False, udp_port=5001, verbose=False):
-    lost = 0
-    latency = []
-    jitter = []
-
-    # Do pings, and collect latencies all other stats will be derived.
-    for i in range(0, count):
-        try:
-            if udp_ping and udp_port:
-                delay = udp.single_ping(
-                    destination, udp_port, timeout, i,
-                    length, src_ip=source, verbose=verbose)
-            else:
-                delay = icmp.single_ping(
-                    destination, timeout, i, length,
-                    src_ip=source, verbose=verbose)
-        except OSError:
-            sys.exit(2)
-
-        if delay is None:
-            lost += 1
-            continue
-        latency.append(delay)
-
-        # Skip jitter calculation until we have at least 2 packets returned.
-        if len(latency) > 1:
-            jitter.append(abs(latency[-1] - latency[-2]))
-
-    # Packet loss percentage
-    lost_perc = lost / float(count)
-
-    # Calculate min, max and average latency.
-    if len(latency) > 0:
-        min_latency = min(latency)
-        max_latency = max(latency)
-        avg_latency = sum(latency) / len(latency)
-    else:
-        min_latency = float('nan')
-        max_latency = float('nan')
-        avg_latency = float('nan')
-
-    # Calculate min, max and average jitter
-    if len(jitter) > 0:
-        min_jitter = min(jitter)
-        max_jitter = max(jitter)
-        avg_jitter = sum(jitter) / len(jitter)
-    else:
-        min_jitter = float('nan')
-        max_jitter = float('nan')
-        avg_jitter = float('nan')
-
-    if len(latency) > 0:
-        mos = utils.mos_score(avg_latency, avg_jitter, (lost_perc * 100))
-    else:
-        mos = float('nan')
-
-    return (
-        lost, lost_perc, min_latency, max_latency, avg_latency,
-        min_jitter, max_jitter, avg_jitter, mos)
 
 
 def print_output(args, lost, lost_perc, min_latency, max_latency,
@@ -235,7 +173,7 @@ def main(args):
     (
         lost, lost_perc, min_latency, max_latency, avg_latency,
         min_jitter, max_jitter, avg_jitter, mos
-    ) = ping(
+    ) = ping.ping(
         args.source, args.destination, args.length, args.count, args.timeout,
         args.udp, args.udp_port, args.verbose)
 

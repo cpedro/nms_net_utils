@@ -103,23 +103,3 @@ def generate_packet_data(payload_size):
     return data
 
 
-def mos_score(latency, jitter, loss):
-    """Caculate MOS score.
-    Algorithm for MOS is PingPlotter method:
-    https://www.pingman.com/kb/article/how-is-mos-calculated-in-pingplotter-pro-50.html
-    """
-    # Take the average latency, add jitter, but double the impact to
-    # latency then add 10 for protocol latencies
-    eff_latency = latency + jitter * 2 + 10
-    # Implement a basic curve - deduct 4 for the R value at 160ms of
-    # latency (round trip).  Anything over that gets a much more agressive
-    # deduction
-    if eff_latency < 160:
-        r = 93.2 - (eff_latency / 40)
-    else:
-        r = 93.2 - (eff_latency - 120) / 10
-    # Now, let's deduct 2.5 R values per percentage of packet loss
-    # Bug fix: would cause large MOS score when R went below 0.
-    r = max(0, (r - (loss * 2.5)))
-    # Convert the R into an MOS value. (this is a known formula)
-    return 1 + (0.035) * r + (0.000007) * r * (r - 60) * (100 - r)
