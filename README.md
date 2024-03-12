@@ -127,7 +127,62 @@ will be ignore.  This can be used to simulate packet loss on the network.
 $ udpserver.py -l 20
 ```
 
-## MOS Score
+# Check_MK Probe Plugin
+
+Included also, is a Check_MK plugin script.  This is meant to run on a remote
+server and that can ping multiple different locations, then report back on
+latency, jitter, packet loss and MOS score.  The script will also need a JSON
+config file to ping the remote destinations.
+
+To use the Check_MK plugin see implementation of it
+[Here](https://github.com/cpedro/check_mk_plugins)
+
+## Usage
+
+```
+usage: cmk_ping_probe.py [-h] [-v] config
+
+Check_MK Ping Probe Script
+
+positional arguments:
+  config         JSON config file to work off.
+
+options:
+  -h, --help     show this help message and exit
+  -v, --verbose  verbose output
+```
+
+## JSON config file format
+
+Any of these fields can be excluded and the default values will be used instead.
+
+```JSON
+```{
+  "probes": [
+    {
+      "a": "A",
+      "z": "Z",
+      "src": "",
+      "dest": "9.9.9.9",
+      "length": 64,
+      "count": 4,
+      "timeout": 3000,
+      "use_udp": false,
+      "udp_port": 5001
+    },
+    {
+      "a": "Me",
+      "z": "Google",
+      "dest": "8.8.8.8",
+      "length": 100,
+      "count": 5,
+      "timeout": 1000,
+    }
+  ]
+}
+```
+
+# MOS Score
 
 Mean Opinion Score or MOS score is measurable, industry standard for rating
 voice and video calls.  The higher the score, the better the quality and less
