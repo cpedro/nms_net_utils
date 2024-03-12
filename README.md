@@ -157,7 +157,7 @@ options:
 Any of these fields can be excluded and the default values will be used instead.
 
 ```JSON
-```{
+{
   "probes": [
     {
       "a": "A",
