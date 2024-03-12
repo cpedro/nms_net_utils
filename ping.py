@@ -93,7 +93,7 @@ def print_output(args, lost, lost_perc, min_latency, max_latency,
                 min_jitter, max_jitter, avg_jitter))
             print(' - MOS score: {:.2f}'.format(mos))
     elif args.output == 'check_mk':
-        print('<<<nms_net_utils_ping>>>>')
+        print('<<<nms_net_utils_ping>>>')
         ping_type = 'udp' if args.udp else 'icmp'
         if lost_perc == 1:
             print('{}_to_{} {} {} {:.4f} NaN NaN NaN NaN NaN NaN NaN'.format(

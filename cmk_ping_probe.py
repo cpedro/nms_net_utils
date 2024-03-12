@@ -77,7 +77,7 @@ def main(args):
     """
     args = parse_args(args)
     config = parse_config(args.config)
-    print('<<<ping_probe>>>>')
+    print('<<<ping_probe>>>')
     for probe in config['probes']:
         # Avoid any missing probe variables by setting defaults.
         set_probe_defaults(probe)
