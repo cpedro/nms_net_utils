@@ -98,7 +98,7 @@ def main(args):
             print(('{}_to_{} {} {} {:.4f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} '
                   '{:.2f} {:.2f}').format(
                 probe['a'], probe['z'], probe['dest'], ping_type, lost_perc,
-                min_latency, max_latency, avg_latency, min_latency, max_jitter,
+                min_latency, max_latency, avg_latency, min_jitter, max_jitter,
                 avg_jitter, mos))
 
 

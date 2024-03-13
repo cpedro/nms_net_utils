@@ -102,7 +102,7 @@ def print_output(args, lost, lost_perc, min_latency, max_latency,
             print(('{}_to_{} {} {} {:.4f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} '
                   '{:.2f} {:.2f}').format(
                 args.a, args.z, args.destination, ping_type, lost_perc,
-                min_latency, max_latency, avg_latency, min_latency, max_jitter,
+                min_latency, max_latency, avg_latency, min_jitter, max_jitter,
                 avg_jitter, mos))
     elif args.output == 'nagios':
         # If all packets were lost, just return critical.
